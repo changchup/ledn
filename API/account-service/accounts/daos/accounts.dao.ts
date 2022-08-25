@@ -4,6 +4,7 @@ import mongooseService from '../../common/services/mongoose.service';
 import shortid from 'shortid';
 import debug from 'debug';
 import { PatchAccountDto } from '../dto/patch.account.dto';
+import { AccountStatus } from '../../common/enums/accountStatus.enum';
 
 const log: debug.IDebugger = debug('app:accounts-dao');
 
@@ -12,10 +13,10 @@ class AccountsDao {
 
   accountSchema = new this.Schema({
     _id: String,
-    userEmail: String,
-    status: String,
-    updatedAt: Date,
-    createdAt: Date,
+    userEmail: { type: String, unique: true, required: true },
+    status: { type: String, required: true, default: AccountStatus.LOCKED },
+    updatedAt: { type: Date, required: true },
+    createdAt: { type: Date, required: true },
   }, { id: false });
 
   Account = mongooseService.getMongoose().model('Accounts', this.accountSchema);
@@ -25,10 +26,16 @@ class AccountsDao {
   }
 
   async addAccount(accountFields: CreateAccountDto) {
+
+    // initialize account in locked state
+    const now = new Date();
     const accountId = shortid.generate();
     const account = new this.Account({
       _id: accountId,
-      ...accountFields,
+      userEmail: accountFields.userEmail,
+      status: AccountStatus.LOCKED,
+      updatedAt: now,
+      createdAt: now
     });
     await account.save();
     return accountId;
@@ -46,6 +53,7 @@ class AccountsDao {
     accountId: string,
     accountFields: PatchAccountDto
   ) {
+    accountFields.updatedAt = new Date()
     const existingAccount = await this.Account.findOneAndUpdate(
       { _id: accountId },
       { $set: accountFields },
