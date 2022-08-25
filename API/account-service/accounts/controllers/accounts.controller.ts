@@ -4,13 +4,9 @@ import debug from 'debug';
 
 const log: debug.IDebugger = debug('app:accounts-controller');
 class AccountsController {
-  async listAccounts(req: express.Request, res: express.Response) {
-    const accounts = await accountsService.list(100, 0);
-    res.status(200).send(accounts);
-  }
 
   async getAccountById(req: express.Request, res: express.Response) {
-    const account = await accountsService.readById(req.body.id);
+    const account = await accountsService.readById(req.params.accountId);
     res.status(200).send(account);
   }
 
@@ -20,7 +16,7 @@ class AccountsController {
   }
 
   async patch(req: express.Request, res: express.Response) {
-    log(await accountsService.patchById(req.body.id, req.body));
+    log(await accountsService.patchById(req.params.accountId, req.body));
     res.status(204).send();
   }
 

@@ -1,3 +1,4 @@
-import { PutAccountDto } from './put.account.dto';
-
-export interface PatchAccountDto extends Partial<PutAccountDto> {}
+export interface PatchAccountDto {
+  status: Status;
+  updatedAt: Date;
+}

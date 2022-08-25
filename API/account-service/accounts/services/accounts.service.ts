@@ -8,10 +8,6 @@ class AccountsService implements CRUD {
         return AccountsDao.addAccount(resource);
     }
 
-    async list(limit: number, page: number) {
-        return AccountsDao.getAccounts(limit, page);
-    }
-
     async patchById(id: string, resource: PatchAccountDto) : Promise<any> {
         return AccountsDao.updateAccountById(id, resource);
     }

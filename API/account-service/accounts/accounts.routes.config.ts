@@ -11,7 +11,6 @@ export class AccountsRoutes extends CommonRoutesConfig {
   configureRoutes(): express.Application {
     this.app
       .route(`/accounts`)
-      .get(AccountsController.listAccounts)
       .post(
         AccountsMiddleware.validateRequiredAccountBodyFields,
         AccountsMiddleware.validateSameEmailDoesntExist,
@@ -22,11 +21,6 @@ export class AccountsRoutes extends CommonRoutesConfig {
       .route(`/accounts/:accountId`)
       .all(AccountsMiddleware.validateAccountExists)
       .get(AccountsController.getAccountById);
-
-    // this.app.put(`/accounts/:accountId`, [
-    //     AccountsMiddleware.validateRequiredAccountBodyFields,
-    //     AccountsController.put,
-    // ]);
 
     this.app.patch(`/accounts/:accountId`, [
       AccountsController.patch,

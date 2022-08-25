@@ -39,15 +39,9 @@ class AccountsDao {
   }
 
   async getAccountById(accountId: string) {
-    return this.Account.findOne({ _id: accountId }).populate('status').exec();
+    return this.Account.findOne({ _id: accountId }).exec();
   }
 
-  async getAccounts(limit = 25, page = 0) {
-    return this.Account.find()
-      .limit(limit)
-      .skip(limit * page)
-      .exec();
-  }
   async updateAccountById(
     accountId: string,
     accountFields: PatchAccountDto
