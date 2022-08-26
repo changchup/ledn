@@ -1,9 +1,16 @@
 import mongoose from 'mongoose';
 import debug from 'debug';
+import "reflect-metadata";
+import { container, injectable, singleton } from 'tsyringe';
 
 const log: debug.IDebugger = debug('app:mongoose-service');
 
+@singleton()
 class MongooseService {
+    static getMongoose(): any{
+      return mongoose;
+    }
+    
     private count = 0;
     private mongooseOptions = {
       serverSelectionTimeoutMS: 5000,
@@ -13,7 +20,7 @@ class MongooseService {
         this.connectWithRetry();
     }
 
-    getMongoose() {
+    getMongoose = () => {
         return mongoose;
     }
 
@@ -35,4 +42,4 @@ class MongooseService {
             });
     };
 }
-export default new MongooseService();
+export default MongooseService;

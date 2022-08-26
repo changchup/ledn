@@ -1,15 +1,19 @@
 import { CreateAccountDto } from '../dto/create.account.dto';
-import mongooseService from '../../common/services/mongoose.service';
+import MongooseService from '../../common/services/mongoose.service';
 
 import shortid from 'shortid';
 import debug from 'debug';
 import { PatchAccountDto } from '../dto/patch.account.dto';
 import { AccountStatus } from '../../common/enums/accountStatus.enum';
+import { container } from 'tsyringe';
 
 const log: debug.IDebugger = debug('app:accounts-dao');
 
 class AccountsDao {
-  Schema = mongooseService.getMongoose().Schema;
+  
+  mongooseService = container.resolve(MongooseService);
+  
+  Schema = this.mongooseService.getMongoose().Schema;
 
   accountSchema = new this.Schema({
     _id: String,
@@ -19,7 +23,7 @@ class AccountsDao {
     createdAt: { type: Date, required: true },
   }, { id: false });
 
-  Account = mongooseService.getMongoose().model('Accounts', this.accountSchema);
+  Account = this.mongooseService.getMongoose().model('Accounts', this.accountSchema);
 
   constructor() {
     log('Created new instance of AccountsDao');
