@@ -71,3 +71,4 @@ describe('accounts endpoints', function () {
 // can i add duplicate emails
 // can I set a status to another value 
 // can I add other fields to account
+// is email valid
