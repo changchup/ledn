@@ -6,6 +6,8 @@ import cors from 'cors';
 import { CommonRoutesConfig } from './common/common.routes.config';
 import { AccountsRoutes } from './accounts/accounts.routes.config';
 import debug from 'debug';
+import * as dotenv from "dotenv";
+dotenv.config({ path: __dirname+'/.env' });
 
 const app: express.Application = express();
 const server: http.Server = http.createServer(app);
