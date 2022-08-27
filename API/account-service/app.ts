@@ -7,6 +7,7 @@ import { CommonRoutesConfig } from './common/common.routes.config';
 import { AccountsRoutes } from './accounts/accounts.routes.config';
 import debug from 'debug';
 import * as dotenv from "dotenv";
+import { TransactionsRoutes } from './transactions/transactions.routes.config';
 dotenv.config({ path: __dirname+'/.env' });
 
 const app: express.Application = express();
@@ -36,6 +37,7 @@ if (!process.env.DEBUG) {
 app.use(expressWinston.logger(loggerOptions));
 
 routes.push(new AccountsRoutes(app));
+routes.push(new TransactionsRoutes(app));
 
 const runningMessage = `Server running at http://localhost:${port}`;
 app.get('/', (req: express.Request, res: express.Response) => {
