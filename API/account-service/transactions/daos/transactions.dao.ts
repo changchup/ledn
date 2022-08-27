@@ -3,18 +3,21 @@ import shortid from 'shortid';
 import debug from 'debug';
 import MongooseService from '../../common/services/mongoose.service';
 import { container } from 'tsyringe';
+import Locks from '../locks/locks';
 
 const log: debug.IDebugger = debug('app:transactions-dao');
 
 class TransactionsDao {
 
   mongooseService = container.resolve(MongooseService);
+  locks = container.resolve(Locks);
+  lockId: string = ""
 
   Schema = this.mongooseService.getMongoose().Schema;
 
   transactionSchema = new this.Schema({
     _id: String,
-    userEmail: { type: String, unique: true, required: true },
+    userEmail: { type: String, required: true },
     amount: { type: Number, required: true },
     type: { type: String, required: true },
     createdAt: { type: Date, required: true },
@@ -34,6 +37,24 @@ class TransactionsDao {
     });
     await transaction.save();
     return transactionId;
+  }
+
+  async addTransactionWithLock(transactionFields: CreateTransactionDto) {
+    const userEmail = transactionFields.userEmail
+    try {
+      this.lockId = await this.locks.getLock(userEmail)
+    } catch (err) {
+      log(` ${userEmail} locked`)
+      throw new Error((err as Error).message)
+    }
+    const transactionId = await this.addTransaction(transactionFields)
+    try {
+      await this.locks.releaseLock(userEmail, this.lockId)
+      log(` ${userEmail} lock released`)
+    } catch {
+      log(`Account ${userEmail} lock not released`);
+    }
+    return transactionId
   }
 
 }
