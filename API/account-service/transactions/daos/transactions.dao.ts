@@ -4,16 +4,19 @@ import debug from 'debug';
 import MongooseService from '../../common/services/mongoose.service';
 import { container } from 'tsyringe';
 import Locks from '../locks/locks';
+// todo refactor to own domain or graphql...
+import AccountsDao from '../../accounts/daos/accounts.dao'
 
 const log: debug.IDebugger = debug('app:transactions-dao');
 
 class TransactionsDao {
 
   mongooseService = container.resolve(MongooseService);
-  locks = container.resolve(Locks);
+  //accountService = container.resolve(AccountsDao);
+  //locks = container.resolve(Locks);
   lockId: string = ""
 
-  Schema = this.mongooseService.getMongoose().Schema;
+  Schema = MongooseService.getMongoose().Schema;
 
   transactionSchema = new this.Schema({
     _id: String,
@@ -40,11 +43,24 @@ class TransactionsDao {
   }
 
   async addTransactionWithLock(transactionFields: CreateTransactionDto) {
-    const userEmail = transactionFields.userEmail
-    this.lockId = this.locks.getLock(userEmail)
+    await this.checkBalance(transactionFields)
+    await this.validateAccountNotLocked(transactionFields)
     const transactionId = await this.addTransaction(transactionFields)
-    this.locks.releaseLock(userEmail, this.lockId)
     return transactionId
+  }
+
+  async checkBalance(transactionFields: CreateTransactionDto) {
+    const resultAfterTransaction = await this.getBalance(transactionFields.userEmail) - transactionFields.amount
+    if (transactionFields.type === 'send' && resultAfterTransaction < 0) {
+      throw Error(`This transaction is rejected as will overdraw account by $${resultAfterTransaction}`)
+    }
+  }
+
+  async validateAccountNotLocked(transactionFields: CreateTransactionDto) {
+    const result:any = await AccountsDao.Account.findOne({userStatus: transactionFields.userEmail})
+    if(result.status === 'locked'){
+      throw Error(`user: ${transactionFields.userEmail}, Account locked`)
+    }
   }
 
   async getBalance(userEmail: string) {

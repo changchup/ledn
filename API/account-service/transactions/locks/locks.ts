@@ -19,7 +19,7 @@ class Locks{
     return lockId
   }
 
-  releaseLock = async (userEmail: string, id: string) => {
+  releaseLock = (userEmail: string, id: string) => {
     if (id === this.locks.get(userEmail)) {
       log(`${userEmail}: lock released,lock id: ${this.locks.get(userEmail)}`)
       this.locks.delete(userEmail)
@@ -29,5 +29,5 @@ class Locks{
     }
   }
 }
-export default Locks;
+export default new Locks();
 

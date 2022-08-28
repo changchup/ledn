@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import debug from 'debug';
 import "reflect-metadata";
-import { container, injectable, singleton } from 'tsyringe';
+import { singleton } from 'tsyringe';
 
 const log: debug.IDebugger = debug('app:mongoose-service');
 
@@ -18,6 +18,7 @@ class MongooseService {
 
     constructor() {
         this.connectWithRetry();
+        log('Created new instance of mongooose service');
     }
 
     getMongoose = () => {
@@ -27,7 +28,7 @@ class MongooseService {
     connectWithRetry = () => {
         log('Attempting MongoDB connection (will retry if needed)');
         mongoose
-            .connect('mongodb://localhost:27017/api-db', this.mongooseOptions)
+            .connect(process.env.MONGO_URL || 'mongodb://localhost:27017/api-db', this.mongooseOptions)
             .then(() => {
                 log('MongoDB is connected');
             })
@@ -42,4 +43,4 @@ class MongooseService {
             });
     };
 }
-export default MongooseService;
+export default MongooseService

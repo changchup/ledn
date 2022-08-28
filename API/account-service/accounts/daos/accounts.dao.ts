@@ -5,10 +5,11 @@ import shortid from 'shortid';
 import debug from 'debug';
 import { PatchAccountDto } from '../dto/patch.account.dto';
 import { AccountStatus } from '../../common/enums/accountStatus.enum';
-import { container } from 'tsyringe';
+import { container, injectable, singleton } from 'tsyringe';
 
 const log: debug.IDebugger = debug('app:accounts-dao');
 
+@injectable()
 class AccountsDao {
   
   mongooseService = container.resolve(MongooseService);
