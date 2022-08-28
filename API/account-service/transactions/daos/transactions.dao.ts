@@ -41,26 +41,16 @@ class TransactionsDao {
 
   async addTransactionWithLock(transactionFields: CreateTransactionDto) {
     const userEmail = transactionFields.userEmail
-    try {
-      this.lockId = await this.locks.getLock(userEmail)
-    } catch (err) {
-      log(` ${userEmail} locked`)
-      throw new Error((err as Error).message)
-    }
+    this.lockId = this.locks.getLock(userEmail)
     const transactionId = await this.addTransaction(transactionFields)
-    try {
-      await this.locks.releaseLock(userEmail, this.lockId)
-      log(` ${userEmail} lock released`)
-    } catch {
-      log(`Account ${userEmail} lock not released`);
-    }
+    this.locks.releaseLock(userEmail, this.lockId)
     return transactionId
   }
 
   async getBalance(userEmail: string) {
     const result = await this.Transaction.aggregate([
-      { 
-        "$match": { "userEmail": userEmail } 
+      {
+        "$match": { "userEmail": userEmail }
       },
       {
         "$group": { _id: "$type", amount: { $sum: "$amount" } }

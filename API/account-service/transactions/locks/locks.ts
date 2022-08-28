@@ -10,21 +10,21 @@ class Locks{
 
   getLock =  (userEmail: string) => {
     if (this.locks.has(userEmail)) {
-      console.log(`${userEmail}: lock not available`)
-      throw new Error(`${userEmail}: lock not available`);
+      log(`${userEmail}: lock not available,lock id: ${this.locks.get(userEmail)}`)
+      throw new Error(`${userEmail}: lock not available, lock id: ${this.locks.get(userEmail)}`);
     }
-    console.log(`${userEmail}: lock vailable`)
     const lockId = shortid.generate()
     this.locks.set(userEmail, lockId)
+    log(`${userEmail}: lock available,lock id: ${this.locks.get(userEmail)}`)
     return lockId
   }
 
   releaseLock = async (userEmail: string, id: string) => {
     if (id === this.locks.get(userEmail)) {
+      log(`${userEmail}: lock released,lock id: ${this.locks.get(userEmail)}`)
       this.locks.delete(userEmail)
-      console.log(`${userEmail}: lock released`)
     } else {
-      console.log(`${userEmail}: lock not found`)
+      log(`${userEmail}: lock not found`)
       throw new Error(`${userEmail}: lock not found`)
     }
   }
