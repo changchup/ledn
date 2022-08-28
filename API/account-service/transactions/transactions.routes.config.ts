@@ -16,6 +16,12 @@ export class TransactionsRoutes extends CommonRoutesConfig {
                 TransactionsController.createTransaction
             );
 
+            this.app
+            .route(`/accounts/:userEmail/balance`)
+            .get(
+                //TransactionsMiddleware.validateRequiredTransactionBodyFields,
+                TransactionsController.getBalance
+            );
         return this.app;
     }
 }

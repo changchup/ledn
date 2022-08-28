@@ -57,6 +57,22 @@ class TransactionsDao {
     return transactionId
   }
 
+  async getBalance(userEmail: string) {
+    const result = await this.Transaction.aggregate([
+      { 
+        "$match": { "userEmail": userEmail } 
+      },
+      {
+        "$group": { _id: "$type", amount: { $sum: "$amount" } }
+      }],
+    );
+
+    const receive = result.find(item => item._id === 'receive')
+    const send = result.find(item => item._id === 'send')
+
+    return receive.amount - send.amount
+  }
+
 }
 
 export default new TransactionsDao();
