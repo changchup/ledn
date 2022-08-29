@@ -18,6 +18,34 @@ class TransactionsMiddleware {
     }
   }
 
+  async validateHasUserEmail(
+    req: express.Request,
+    res: express.Response,
+    next: express.NextFunction
+  ) {
+    if (req.params && req.params.userEmail) {
+      next();
+    } else {
+      res.status(400).send({
+        error: `Missing required field userEmail`,
+      });
+    }
+  }
+
+  async validateAccountNotLocked(
+    req: express.Request,
+    res: express.Response,
+    next: express.NextFunction
+  ) {
+    const notLocked = await transactionService.validateAccountNotLocked(req.body.userEmail);
+    if (notLocked) {
+      next();
+    } else {
+      res.status(400).send({
+        error: `Account ${req.body.userEmail} locked`,
+      });
+    }
+  }
 }
 
 export default new TransactionsMiddleware();

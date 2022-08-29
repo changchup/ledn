@@ -13,13 +13,14 @@ export class TransactionsRoutes extends CommonRoutesConfig {
             .route(`/transactions`)
             .post(
                 TransactionsMiddleware.validateRequiredTransactionBodyFields,
+                TransactionsMiddleware.validateAccountNotLocked,
                 TransactionsController.createTransaction
             );
 
             this.app
             .route(`/accounts/:userEmail/balance`)
             .get(
-                //TransactionsMiddleware.validateRequiredTransactionBodyFields,
+                TransactionsMiddleware.validateHasUserEmail,
                 TransactionsController.getBalance
             );
         return this.app;

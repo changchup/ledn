@@ -23,7 +23,7 @@ class AccountsMiddleware {
     res: express.Response,
     next: express.NextFunction
   ) {
-    const account = await accountService.getAccountByEmail(req.body.userEmail);
+    const account = await accountService.getAccount(req.body.userEmail);
     if (account) {
       res.status(400).send({ error: `Account email already exists` });
     } else {
@@ -36,7 +36,7 @@ class AccountsMiddleware {
     res: express.Response,
     next: express.NextFunction
   ) {
-    const account = await accountService.readById(req.params.accountId);
+    const account = await accountService.getAccount(req.params.userEmail);
     if (account) {
       next();
     } else {

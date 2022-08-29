@@ -8,10 +8,11 @@ const log: debug.IDebugger = debug('app:locks');
 class Locks{
   locks: Map<string, string> = new Map()
 
+  // to do add expiration on lock
   getLock =  (userEmail: string) => {
     if (this.locks.has(userEmail)) {
       log(`${userEmail}: lock not available,lock id: ${this.locks.get(userEmail)}`)
-      throw new Error(`${userEmail}: lock not available, lock id: ${this.locks.get(userEmail)}`);
+      throw Error(`${userEmail}: lock not available, lock id: ${this.locks.get(userEmail)}`);
     }
     const lockId = shortid.generate()
     this.locks.set(userEmail, lockId)
@@ -19,13 +20,13 @@ class Locks{
     return lockId
   }
 
+  // dont throw exceptions for release as not really necessary for user to know
   releaseLock = (userEmail: string, id: string) => {
     if (id === this.locks.get(userEmail)) {
       log(`${userEmail}: lock released,lock id: ${this.locks.get(userEmail)}`)
       this.locks.delete(userEmail)
     } else {
       log(`${userEmail}: lock not found`)
-      throw new Error(`${userEmail}: lock not found`)
     }
   }
 }

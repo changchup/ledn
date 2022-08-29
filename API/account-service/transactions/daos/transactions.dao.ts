@@ -33,6 +33,7 @@ class TransactionsDao {
   }
 
   async addTransaction(transactionFields: CreateTransactionDto) {
+    await this.checkBalance(transactionFields)
     const transactionId = shortid.generate();
     const transaction = new this.Transaction({
       _id: transactionId,
@@ -42,25 +43,20 @@ class TransactionsDao {
     return transactionId;
   }
 
-  async addTransactionWithLock(transactionFields: CreateTransactionDto) {
-    await this.checkBalance(transactionFields)
-    await this.validateAccountNotLocked(transactionFields)
-    const transactionId = await this.addTransaction(transactionFields)
-    return transactionId
-  }
-
   async checkBalance(transactionFields: CreateTransactionDto) {
     const resultAfterTransaction = await this.getBalance(transactionFields.userEmail) - transactionFields.amount
     if (transactionFields.type === 'send' && resultAfterTransaction < 0) {
-      throw Error(`This transaction is rejected as will overdraw account by $${resultAfterTransaction}`)
+      throw Error(`This transaction is rejected as will result in balance of $${resultAfterTransaction}`)
     }
   }
 
-  async validateAccountNotLocked(transactionFields: CreateTransactionDto) {
-    const result:any = await AccountsDao.Account.findOne({userStatus: transactionFields.userEmail})
-    if(result.status === 'locked'){
-      throw Error(`user: ${transactionFields.userEmail}, Account locked`)
+  
+  async validateAccountNotLocked(userEmail: string) {
+    const result:any = await AccountsDao.Account.findOne({userEmail});
+    if(result && result.status === 'locked'){
+      return false
     }
+    return true
   }
 
   async getBalance(userEmail: string) {

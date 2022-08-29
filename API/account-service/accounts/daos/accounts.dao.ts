@@ -46,21 +46,21 @@ class AccountsDao {
     return accountId;
   }
 
-  async getAccountByEmail(email: string) {
-    return this.Account.findOne({ userEmail: email }).exec();
+  async getAccount(userEmail: string) {
+    return this.Account.findOne({ userEmail: userEmail }).exec();
   }
 
   async getAccountById(accountId: string) {
     return this.Account.findOne({ _id: accountId }).exec();
   }
 
-  async updateAccountById(
-    accountId: string,
+  async updateAccount(
+    userEmail: string,
     accountFields: PatchAccountDto
   ) {
     accountFields.updatedAt = new Date()
     const existingAccount = await this.Account.findOneAndUpdate(
-      { _id: accountId },
+      { userEmail: userEmail },
       { $set: accountFields },
       { new: true }
     ).exec();

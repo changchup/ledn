@@ -18,11 +18,11 @@ export class AccountsRoutes extends CommonRoutesConfig {
       );
 
     this.app
-      .route(`/accounts/:accountId`)
+      .route(`/accounts/:userEmail`)
       .all(AccountsMiddleware.validateAccountExists)
-      .get(AccountsController.getAccountById);
+      .get(AccountsController.getAccount);
 
-    this.app.patch(`/accounts/:accountId`, [
+    this.app.patch(`/accounts/:userEmail`, [
       AccountsController.patch,
     ]);
 
