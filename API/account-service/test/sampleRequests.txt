@@ -1,0 +1,47 @@
+curl --request GET 'localhost:3000/accounts/Rod.Wintheiser86@gmail.com' \
+--header 'Content-Type: application/json'
+
+curl --include --request PATCH "localhost:3000/accounts/xkat7r55gO" \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "status": "active"
+}'
+
+curl --include --request POST "localhost:3000/accounts" \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "userEmail": "test@me.com"
+}'
+
+curl --request GET 'localhost:3000/transactions/xkat7r55gO' \
+--header 'Content-Type: application/json'
+
+curl --include --request PATCH "localhost:3000/accounts/xkat7r55gO" \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "status": "active"
+}'
+
+curl --include --request POST "localhost:3000/accounts" \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "userEmail": "test@me.com"
+}'
+
+curl --include --request POST "localhost:3000/transactions" \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "userEmail": "Coby_Corwin2@gmail.com",
+    "type":"send",
+    "amount":"5"
+}'
+
+curl --request GET 'localhost:3000/transactions' \
+--header 'Content-Type: application/json'
+
+curl --request GET 'localhost:3000/accounts/Rod.Wintheiser86@gmail.com/balance' \
+--header 'Content-Type: application/json'
+
+
+ledn_mongo_1
+sudo docker-compose up -d
