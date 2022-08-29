@@ -7,7 +7,8 @@
     "start": "tsc && node --unhandled-rejections=strict ./dist/app.js",
     "start-dev": "NODE_ENV=development ts-node-dev --files --transpile-only --respawn --inspect=4321 --project tsconfig.json app.ts",
     "debug": "export DEBUG=* && npm run start",
-    "test": "mocha -r ts-node/register 'test/**/*.test.ts' --unhandled-rejections=strict",
+    "test-unit": "mocha -r ts-node/register 'test/**/unit.test.ts' --unhandled-rejections=strict",
+    "test-e2e": "mocha -r ts-node/register 'test/**/e2e.test.ts' --unhandled-rejections=strict",
     "test-debug": "export DEBUG=* && npm test"
   },
   "author": "",
