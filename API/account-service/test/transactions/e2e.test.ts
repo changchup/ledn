@@ -14,7 +14,8 @@ const transactionBody = {
 const userEmailUnChanged = "Rod.Wintheiser86@gmail.com"
 const lockedUser = "Annabell.Wintheiser@hotmail.com"
 const unlockedUser = "Coby_Corwin2@gmail.com"
-const simulUser = "Jodie0@hotmail.com"
+const simulUser1 = "Jodie0@hotmail.com"
+const simulUser2 = "Maribel72@hotmail.com"
 
 describe('transactions endpoints', function () {
   let request: supertest.SuperAgentTest;
@@ -102,22 +103,34 @@ describe('transactions endpoints', function () {
 
   it('should lock simultaneous transactions for an account POST to /transactions', async function () {
 
-    const data = { userEmail: simulUser, amount: 1, type: "receive", createdAt: new Date() };
+    const transactionWithUser1 = { userEmail: simulUser1, amount: 1, type: "receive", createdAt: new Date() };
+    const transactionWithUser2 = { userEmail: simulUser2, amount: 1, type: "receive", createdAt: new Date() };
 
     // parallel should lock
-    const results = await Promise.all([
-      request.post('/transactions').send(data),
-      request.post('/transactions').send(data)
+    const parallelResults = await Promise.all([
+      request.post('/transactions').send(transactionWithUser1),
+      request.post('/transactions').send(transactionWithUser1),
+      request.post('/transactions').send(transactionWithUser2),
+      request.post('/transactions').send(transactionWithUser2),
     ])
 
-    expect(results.find(result => result.status === 503)).to.not.be.null
+    for(const result of parallelResults){
+      //console.log(result.status)
+    }
+
+    // should be 2 successes and 2 locks
+    expect(parallelResults.filter(result => result.status === 201).length).to.equal(2)
+    expect(parallelResults.filter(result => result.status === 500).length).to.equal(2)
 
     // synchronous should succeed
-    const result1 = await request.post('/transactions').send(data)
-    const result2 = await request.post('/transactions').send(data)
+    const syncResults = []
+    syncResults.push(await request.post('/transactions').send(transactionWithUser1))
+    syncResults.push(await request.post('/transactions').send(transactionWithUser1))
+    syncResults.push(await request.post('/transactions').send(transactionWithUser2))
+    syncResults.push(await request.post('/transactions').send(transactionWithUser2))
 
-    expect(result1.status).to.equal(201);
-    expect(result2.status).to.equal(201);
+    // should be 4 successes
+    expect(syncResults.filter(result => result.status === 201).length).to.equal(4)
   });
 
 

@@ -50,10 +50,9 @@ class TransactionsDao {
     }
   }
 
-  
   async validateAccountNotLocked(userEmail: string) {
-    const result:any = await AccountsDao.Account.findOne({userEmail});
-    if(result && result.status === 'locked'){
+    const result: any = await AccountsDao.Account.findOne({ userEmail });
+    if (result && result.status === 'locked') {
       return false
     }
     return true
@@ -72,7 +71,7 @@ class TransactionsDao {
     const receive = result.find(item => item._id === 'receive')
     const send = result.find(item => item._id === 'send')
 
-    return receive.amount - send.amount
+    return receive.amount - ((typeof send !== "undefined") ? send.amount : 0);
   }
 
 }
