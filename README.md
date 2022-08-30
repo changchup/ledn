@@ -12,3 +12,9 @@ To run the end-to-end tests
 ```
 npm run test-e2e
 ```
+
+## Some Design Explanations
+
+I chose to use singletons rather than DI as it was simpler.  DI would enable unit testing, but there was not much unit level work to test.
+
+The locking mechanism is simple with no expiration.  I was trying to create my own utility as requested in the instructions.  I would have preferred to use something like Redis.
