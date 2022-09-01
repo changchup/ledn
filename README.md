@@ -17,19 +17,19 @@ npm run test-e2e
 
 Get account
 ```
-GET /account/:userEmail
+GET /accounts/:userEmail
 ```
 Get balance
 ```
-GET /account/:userEmail/balance
+GET /accounts/:userEmail/balance
 ```
 Add transaction
 ```
-POST /transactions
+POST /transactions - body = {"userEmail": "me@me.com", "type": "send", "amount":"5"  }
 ```
 Update account status
 ```
-PATCH /account - body = {status: blah}
+PATCH /accounts - body = {"status": "locked"}
 ```
 
 ## Some Design Explanations
