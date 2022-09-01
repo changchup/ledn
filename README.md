@@ -13,6 +13,25 @@ To run the end-to-end tests
 npm run test-e2e
 ```
 
+## API
+
+Get account
+```
+GET /account/:userEmail
+```
+Get balance
+```
+GET /account/:userEmail/balance
+```
+Add transaction
+```
+POST /transactions
+```
+Update account status
+```
+PATCH /account - body = {status: blah}
+```
+
 ## Some Design Explanations
 
 I chose to use singletons rather than DI as it was simpler.  DI would enable unit testing, but there was not much unit level work to test.
